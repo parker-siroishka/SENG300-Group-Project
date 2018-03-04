@@ -9,7 +9,9 @@ import org.eclipse.jdt.core.dom.*;
 
 
 
-public class ASTParser {
+
+
+public class DirectoryParser {
 	
 	public static String convertFilesToString(String directoryPath)throws IOException {
 		String target_dir = directoryPath;
@@ -27,6 +29,7 @@ public class ASTParser {
 					
 					while((line = inputStream.readLine()) != null) {
 						sb.append(line);
+						sb.append(System.lineSeparator());
 					}
 				}
 				finally {
@@ -41,6 +44,12 @@ public class ASTParser {
 	
 	public static void main(String[] args) throws IOException {
 		Scanner kb = new Scanner(System.in);
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		System.out.print("Enter directory pathname: ");
+		String pathname = kb.next();
+		System.out.print("Enter name of Java type to count (Ex: 'SIMPLE_NAME', 'TRY_STATEMENT'); ");
+		String javaType = kb.next();
+		
+		
 	}
 }
