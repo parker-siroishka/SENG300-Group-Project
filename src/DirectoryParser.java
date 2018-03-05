@@ -44,12 +44,35 @@ public class DirectoryParser {
 	
 	public static void main(String[] args) throws IOException {
 		Scanner kb = new Scanner(System.in);
+		
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
+		
 		System.out.print("Enter directory pathname: ");
 		String pathname = kb.next();
-		System.out.print("Enter name of Java type to count (Ex: 'SIMPLE_NAME', 'TRY_STATEMENT'); ");
-		String javaType = kb.next();
 		
+		char[] directoryContent = convertFilesToString(pathname).toCharArray();
+		
+		parser.setSource(directoryContent);
+		
+		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+		
+		
+		
+		//System.out.print("Enter name of Java type to count (Ex: 'SIMPLE_NAME', 'TRY_STATEMENT'); ");
+		//String javaType = kb.next();
+
+			cu.accept(new ASTVisitor() {
+				
+				public boolean visit(VariableDeclarationFragment node) {
+					System.out.println("DECLARATION FOUND");
+					return true;
+					
+					
+					
+				}
+			});
+		
+		//System.out.println("Variable Declarations: " + declarations);
 		
 	}
 }
