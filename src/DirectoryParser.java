@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.io.File;
 
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 
 public class DirectoryParser {
@@ -15,7 +17,7 @@ public class DirectoryParser {
 	int enumDeclarationCounter = 0;
 	
 	/**
-	 * Iterates through all files in directory 
+	 * Iterates through all files in directory and concatenates to one string
 	 * 
 	 * @param directoryPath - location to directory for parsing
 	 * @return String - String of java code in directory
@@ -51,22 +53,27 @@ public class DirectoryParser {
 		return sb.toString();
 	}
 	
-	public int getClassDeclarationCount(String pathname, ASTParser parser) throws IOException {
+	public void calcClassAndInterfaceCount(String pathname, ASTParser parser) throws IOException {
 		final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 		
+		//System.out.println(cu.getAST().hasResolvedBindings());
 		cu.accept(new ASTVisitor() {
 			
 			public boolean visit(TypeDeclaration node) {
-				classDeclarationCounter++;
+				if (node.isInterface()) {
+					interfaceDeclarationCounter++;
+				}else {classDeclarationCounter++;}
+					
+				
 				//ITypeBinding binding = node.resolveBinding();
 				//System.out.println("Binding: "+binding);
 				return true;
 			}
 		});
-		return classDeclarationCounter;
+		
 	}
 	
-	public int getEnumDeclarationCount(String pathname, ASTParser parser) throws IOException {
+	public void getEnumDeclarationCount(String pathname, ASTParser parser) throws IOException {
 		final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 		
 		cu.accept(new ASTVisitor() {
@@ -76,11 +83,10 @@ public class DirectoryParser {
 				return true;
 			}
 		});
-		return enumDeclarationCounter;
 	}
 	
 	
-	public int getAnnotationDeclarationCount(String pathname, ASTParser parser) throws IOException {
+	public void getAnnotationDeclarationCount(String pathname, ASTParser parser) throws IOException {
 		final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 		
 		cu.accept(new ASTVisitor() {
@@ -90,23 +96,24 @@ public class DirectoryParser {
 				return false;
 			}
 		});
-		return annotationDeclarationCounter;
 	}
 	
-	public int parseSpecifiedType(int type, String pathname, ASTParser parser) throws IOException {
-		if(type == 1) {
-			System.out.println("\nClass Type." + "Declarations: " + this.getClassDeclarationCount(pathname, parser) + 
-					" References: " + "N/A");
-		}else if (type == 2) {
-			System.out.println("Interface Declaration not implemented yet");
-		}else if (type == 3) {
-			System.out.println("\nEnumeration Type." + "Declarations: " + this.getEnumDeclarationCount(pathname, parser) + 
-					" References: " + "N/A");
-		}else {
-			System.out.println("\nAnnotation Type." + "Declarations: " + this.getAnnotationDeclarationCount(pathname, parser) + 
-					" References: " + "N/A");
+
+	
+	public void parseType(String pathname, ASTParser parser, String type) throws IOException {
+		if (type.equals("Class")) {
+			this.calcClassAndInterfaceCount(pathname, parser);
+			System.out.println("Class: Declarations-"+classDeclarationCounter+" References-");
+		}else if(type.equals("Interface")) {
+			this.calcClassAndInterfaceCount(pathname, parser);
+			System.out.println("Interface: Declarations-"+interfaceDeclarationCounter+" References-");
+		}else if(type.equals("enum")) {
+			this.getEnumDeclarationCount(pathname, parser);
+			System.out.println("Enumeration: Declarations-"+enumDeclarationCounter+" References-");
+		}else if(type.equals("Annotation")) {
+			this.getAnnotationDeclarationCount(pathname, parser);
+			System.out.println("Annotation: Declarations-"+annotationDeclarationCounter+" References-");
 		}
-		return 0;
 	}
 	
 	public String getDirectoryPathname(Scanner kb) {
@@ -115,25 +122,16 @@ public class DirectoryParser {
 		
 		return tempString;
 	}
-	public int getSpecifiedType(Scanner kb) {
-		
-		System.out.print("Count (1)Class Declarations, \n      "
-				+ "(2)Interface Declarations, \n      "
-				+ "(3)Enum Declaration, or \n      "
-				+ "(4) Annotation Type Declaration: ");
-		int tempInt = kb.nextInt();
-		
-		return tempInt;
-	}
 	
 	private static ASTParser buildParser(char[] directoryContent, String pathname) {
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setSource(directoryContent);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setResolveBindings(true);
+		parser.setBindingsRecovery(true);
 		String[] classpathEntries = new String[] {pathname};
 	    String[] sourcepathEntries = new String[] {pathname};
-		parser.setEnvironment(classpathEntries, sourcepathEntries, null, false);
+		parser.setEnvironment(classpathEntries, sourcepathEntries, null, true);
 		
 		return parser;
 	}
@@ -142,15 +140,13 @@ public class DirectoryParser {
 	public static void main(String[] args) throws IOException {
 		
 		DirectoryParser dp = new DirectoryParser();
-		Scanner kb = new Scanner(System.in);
 		
-		String pathname = dp.getDirectoryPathname(kb);
-		int specifiedType = dp.getSpecifiedType(kb);
+		String pathname = args[0];
+		String type = args[1];
 		
 		char[] directoryContent = convertFilesToString(pathname).toCharArray();
 		ASTParser parser = buildParser(directoryContent, pathname);
 		
-		dp.parseSpecifiedType(specifiedType, pathname, parser);
-		kb.close();
+		dp.parseType(pathname, parser, type);
 	}
 }
