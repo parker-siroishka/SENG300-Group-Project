@@ -73,7 +73,7 @@ public class DirectoryParser {
 		
 	}
 	
-	public void getEnumDeclarationCount(String pathname, ASTParser parser) throws IOException {
+	public void calcEnumDeclarationCount(String pathname, ASTParser parser) throws IOException {
 		final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 		
 		cu.accept(new ASTVisitor() {
@@ -86,7 +86,7 @@ public class DirectoryParser {
 	}
 	
 	
-	public void getAnnotationDeclarationCount(String pathname, ASTParser parser) throws IOException {
+	public void calcAnnotationDeclarationCount(String pathname, ASTParser parser) throws IOException {
 		final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 		
 		cu.accept(new ASTVisitor() {
@@ -108,10 +108,10 @@ public class DirectoryParser {
 			this.calcClassAndInterfaceCount(pathname, parser);
 			System.out.println("Interface: Declarations-"+interfaceDeclarationCounter+" References-");
 		}else if(type.equals("enum")) {
-			this.getEnumDeclarationCount(pathname, parser);
+			this.calcEnumDeclarationCount(pathname, parser);
 			System.out.println("Enumeration: Declarations-"+enumDeclarationCounter+" References-");
 		}else if(type.equals("Annotation")) {
-			this.getAnnotationDeclarationCount(pathname, parser);
+			this.calcAnnotationDeclarationCount(pathname, parser);
 			System.out.println("Annotation: Declarations-"+annotationDeclarationCounter+" References-");
 		}
 	}
