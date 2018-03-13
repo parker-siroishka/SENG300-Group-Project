@@ -1,5 +1,8 @@
 package astApp;
 
+import javax.lang.model.type.PrimitiveType;
+import javax.lang.model.type.TypeKind;
+
 import org.eclipse.jdt.core.dom.*;
 
 
@@ -13,7 +16,6 @@ public class ASTCounter extends ASTVisitor{
 	
 	public ASTCounter(ASTNode root, String type){
 		
-		//super();
 		this.rootNode = root;
 		this.qualTypeToFind = type;
 	}
@@ -38,12 +40,25 @@ public class ASTCounter extends ASTVisitor{
 		return true;
 	}
 	
-	public boolean visit(MarkerAnnotation node) {
+	
+	public boolean visit(AnnotationTypeDeclaration node) {
 		
-		String binding = node.resolveAnnotationBinding().getName();
+		String binding = node.resolveBinding().getQualifiedName();
 		if(binding.equals(this.qualTypeToFind)){
 			
 			this.declarationCount++;
+		}
+		return true;
+	}
+	
+	
+	public boolean visit(MarkerAnnotation node) {
+		
+		String binding = node.resolveAnnotationBinding().getName();
+		
+		if(binding.equals(this.qualTypeToFind)){
+			
+			this.referenceCount++;
 		}
 		return true;
 	}
@@ -51,13 +66,43 @@ public class ASTCounter extends ASTVisitor{
 	
 	public boolean visit(NormalAnnotation node) {
 		
-		String binding = node.resolveAnnotationBinding().getName();
+		String binding = node.resolveAnnotationBinding().getAnnotationType().getName();
 		if(binding.equals(this.qualTypeToFind)){
 			
-			this.declarationCount++;
+			this.referenceCount++;
 		}
 		return true;
 	}
+
+	
+	public boolean visit(FieldDeclaration node) {
+		String binding = node.getType().resolveBinding().getQualifiedName();
+		System.out.println(binding);
+		if(binding.equals(this.qualTypeToFind)){
+			
+			this.referenceCount++;
+		}
+		return true;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
