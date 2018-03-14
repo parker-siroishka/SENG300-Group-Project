@@ -20,7 +20,7 @@ public class ASTCounter extends ASTVisitor{
 	public boolean visit(TypeDeclaration node) {
 		
 		String binding = node.resolveBinding().getQualifiedName();
-		System.out.println(binding);
+		//System.out.println(binding);
 		if(binding.equals(this.qualTypeToFind)){
 			
 			this.declarationCount++;
@@ -31,7 +31,7 @@ public class ASTCounter extends ASTVisitor{
 	public boolean visit(EnumDeclaration node) {
 		
 		String binding = node.resolveBinding().getQualifiedName();
-		System.out.println(binding);
+		//System.out.println(binding);
 		if(binding.equals(this.qualTypeToFind)){
 			
 			this.declarationCount++;
@@ -39,7 +39,6 @@ public class ASTCounter extends ASTVisitor{
 		return true;
 	}
 	
-	/*
 	public boolean visit(AnnotationTypeDeclaration node) {
 		
 		String binding = node.resolveBinding().getQualifiedName();
@@ -49,8 +48,6 @@ public class ASTCounter extends ASTVisitor{
 		}
 		return true;
 	}
-	
-	
 	
 	public boolean visit(MarkerAnnotation node) {
 		
@@ -63,6 +60,14 @@ public class ASTCounter extends ASTVisitor{
 		return true;
 	}
 	
+	public boolean visit(AnnotationTypeMemberDeclaration node) {
+		String binding = node.getType().resolveBinding().getQualifiedName();
+		if(binding.equals(this.qualTypeToFind)){
+			
+			this.referenceCount++;
+		}
+		return true;
+	}
 	
 	public boolean visit(NormalAnnotation node) {
 		
@@ -74,14 +79,25 @@ public class ASTCounter extends ASTVisitor{
 		}
 		return true;
 	}
+	
+	public boolean visit(SingleMemberAnnotation node) {
+		String binding = node.resolveAnnotationBinding().getAnnotationType().getQualifiedName();
+		System.out.println(binding);
+		if(binding.equals(this.qualTypeToFind)){
+			
+			this.referenceCount++;
+		}
+		return true;
+	}
+	
+	
+	
+	
 
-	*/
-	
-	
 	
 	public boolean visit(FieldDeclaration node) {
 		String binding = node.getType().resolveBinding().getQualifiedName();
-		System.out.println(binding);
+		//System.out.println(binding);
 		if(binding.equals(this.qualTypeToFind)){
 			
 			this.referenceCount++;
@@ -93,7 +109,7 @@ public class ASTCounter extends ASTVisitor{
 	
 	public boolean visit(ClassInstanceCreation node) {
 		String binding = node.getType().resolveBinding().getQualifiedName();
-		System.out.println(binding);
+		//System.out.println(binding);
 		if(binding.equals(this.qualTypeToFind)){
 			
 			this.referenceCount++;
@@ -104,7 +120,7 @@ public class ASTCounter extends ASTVisitor{
 	
 	public boolean visit(VariableDeclarationStatement node) {
 		String binding =  node.getType().resolveBinding().getQualifiedName();
-		System.out.println(binding);
+		//System.out.println(binding);
 		if(binding.equals(this.qualTypeToFind)) {
 
 			this.referenceCount++;

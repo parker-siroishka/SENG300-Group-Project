@@ -68,7 +68,7 @@ public class DirectoryParser {
 	 */
 	
 	public ASTParser configParser(ASTParser parser, String fileContents, String fileName){
-			Map optionMap = JavaCore.getOptions();
+			Map<String, String> optionMap = JavaCore.getOptions();
 			JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, optionMap);
 			parser.setCompilerOptions(optionMap);
 		
