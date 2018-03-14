@@ -74,6 +74,7 @@ public class DirectoryParser {
 		
 			parser.setResolveBindings(true);
 			parser.setBindingsRecovery(true);
+			parser.setIgnoreMethodBodies(false);
 
 			parser.setUnitName(fileName);
 			String[] classpathEntries = new String[] {this.sourceDirectory};

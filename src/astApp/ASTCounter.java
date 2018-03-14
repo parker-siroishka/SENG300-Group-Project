@@ -1,8 +1,5 @@
 package astApp;
 
-import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeKind;
-
 import org.eclipse.jdt.core.dom.*;
 
 
@@ -23,6 +20,7 @@ public class ASTCounter extends ASTVisitor{
 	public boolean visit(TypeDeclaration node) {
 		
 		String binding = node.resolveBinding().getQualifiedName();
+		System.out.println(binding);
 		if(binding.equals(this.qualTypeToFind)){
 			
 			this.declarationCount++;
@@ -33,6 +31,7 @@ public class ASTCounter extends ASTVisitor{
 	public boolean visit(EnumDeclaration node) {
 		
 		String binding = node.resolveBinding().getQualifiedName();
+		System.out.println(binding);
 		if(binding.equals(this.qualTypeToFind)){
 			
 			this.declarationCount++;
@@ -40,7 +39,7 @@ public class ASTCounter extends ASTVisitor{
 		return true;
 	}
 	
-	
+	/*
 	public boolean visit(AnnotationTypeDeclaration node) {
 		
 		String binding = node.resolveBinding().getQualifiedName();
@@ -52,10 +51,11 @@ public class ASTCounter extends ASTVisitor{
 	}
 	
 	
+	
 	public boolean visit(MarkerAnnotation node) {
 		
-		String binding = node.resolveAnnotationBinding().getName();
-		
+		String binding = node.resolveAnnotationBinding().getAnnotationType().getQualifiedName();
+		System.out.println(binding);
 		if(binding.equals(this.qualTypeToFind)){
 			
 			this.referenceCount++;
@@ -66,7 +66,8 @@ public class ASTCounter extends ASTVisitor{
 	
 	public boolean visit(NormalAnnotation node) {
 		
-		String binding = node.resolveAnnotationBinding().getAnnotationType().getName();
+		String binding = node.resolveAnnotationBinding().getAnnotationType().getQualifiedName();
+		System.out.println(binding);
 		if(binding.equals(this.qualTypeToFind)){
 			
 			this.referenceCount++;
@@ -74,6 +75,9 @@ public class ASTCounter extends ASTVisitor{
 		return true;
 	}
 
+	*/
+	
+	
 	
 	public boolean visit(FieldDeclaration node) {
 		String binding = node.getType().resolveBinding().getQualifiedName();
@@ -87,8 +91,26 @@ public class ASTCounter extends ASTVisitor{
 	
 	
 	
+	public boolean visit(ClassInstanceCreation node) {
+		String binding = node.getType().resolveBinding().getQualifiedName();
+		System.out.println(binding);
+		if(binding.equals(this.qualTypeToFind)){
+			
+			this.referenceCount++;
+		}
+		return true;
+	}
 	
 	
+	public boolean visit(VariableDeclarationStatement node) {
+		String binding =  node.getType().resolveBinding().getQualifiedName();
+		System.out.println(binding);
+		if(binding.equals(this.qualTypeToFind)) {
+
+			this.referenceCount++;
+		}
+		return true;		
+	}
 	
 	
 	
