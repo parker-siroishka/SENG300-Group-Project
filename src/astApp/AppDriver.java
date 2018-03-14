@@ -8,17 +8,21 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class AppDriver {
-
+	
+	public static DirectoryParser dirParser;
+	public static ASTParser parser;
+	public static ASTCounter counter;
+	
 	public static void main(String args[]) {
 		
 		String pathname = args[0];
 		String type = args[1];
 		
-		DirectoryParser dp = new DirectoryParser(pathname);
-		ASTParser parser = ASTParser.newParser(AST.JLS8);
-		ASTCounter counter = new ASTCounter(null, type);
+		dirParser = new DirectoryParser(pathname);
+		parser = ASTParser.newParser(AST.JLS8);
+		counter = new ASTCounter(null, type);
 		
-		File directory = new File(dp.getSourceDirectory());
+		File directory = new File(dirParser.getSourceDirectory());
 		File[] filesInDir = directory.listFiles();
 		
 		for(File currFile: filesInDir) {
@@ -26,7 +30,7 @@ public class AppDriver {
 			String sDirectoryContent = null;
 			try {
 				
-				sDirectoryContent = dp.convertFileToString(currFile);
+				sDirectoryContent = dirParser.convertFileToString(currFile);
 				
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -34,7 +38,7 @@ public class AppDriver {
 				e.printStackTrace();
 			}
 			
-			parser = dp.configParser(parser,sDirectoryContent, currFile.getName());
+			parser = dirParser.configParser(parser,sDirectoryContent, currFile.getName());
 			CompilationUnit cu = (CompilationUnit)parser.createAST(null);
 			counter.setRootNode(cu);
 			cu.accept(counter);
